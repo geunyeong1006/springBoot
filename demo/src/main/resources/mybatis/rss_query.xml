@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberone.demo.repository.RssNewsRepository">
+
+	<sql id="whereOrderLimit">
+		<choose>
+			<when test="sidx != null and sidx !=''"> ORDER BY
+				<choose>
+					<when test="sidx eq 'bbsId'"> bbsId </when>
+					<when test="sidx eq 'bbsTit'"> bbsTit </when>
+					<when test="sidx eq 'rssId'"> rssId </when>
+					<when test="sidx eq 'rssSrc'"> rssSrc </when>
+					<when test="sidx eq 'rssAddr'"> rssAddr </when>
+					<when test="sidx eq 'guidParam'"> guidParam </when>
+					<when test="sidx eq 'guidLast'"> guidLast </when>
+					<when test="sidx eq 'regr'"> regr </when>
+					<when test="sidx eq 'regDtime'"> regDtime </when>
+					<when test="sidx eq 'modr'"> modr </when>
+					<when test="sidx eq 'modDtime'"> modDtime </when>
+				</choose>
+				<choose>
+					<when test="sord eq 'desc'"> DESC </when>
+					<otherwise> ASC </otherwise>
+				</choose>
+			</when>			
+			<otherwise>
+				ORDER BY modDtime DESC
+			</otherwise>
+		</choose>
+		LIMIT #{limit}, #{rows}
+    </sql>
+
+    <sql id="countQueryTop">
+        SELECT COUNT(*) as records FROM (
+    </sql>
+    
+   <insert id="insertRss">
+    <selectKey keyProperty="bbsId" resultType="String" order="BEFORE">
+        SELECT MAX(bbsId) FROM BbsBaseTbl WHERE bbsSct='R'
+    </selectKey>
+        INSERT INTO RssTbl(bbsId, rssSrc, rssLink, clippingYn)
+        VALUES (#{bbsId}, #{rssSrc}, #{rssLink}, #{clippingYn})
+    </insert>
+    
+    
+    <select id="selectRssAddrList" resultType="java.util.HashMap">
+        <include refid="sqlRssAddr"/>
+        <include refid="whereOrderLimit"/>
+    </select>
+
+    <select id="selectRssAddrCount" resultType="java.lang.Integer">
+        <include refid="countQueryTop" />
+        <include refid="sqlRssAddr"/>
+        ) B
+    </select>
+    
+	<sql id="sqlRssAddr">
+		SELECT
+			rssId, rssSrc, rssAddr, guidParam, guidLast,
+			(SELECT acctNm FROM AcctTbl C WHERE C.acctId = A.regr) regr,
+			(SELECT acctNm FROM AcctTbl C WHERE C.acctId = A.modr) modr,
+			DATE_format(regDtime, '%Y-%m-%d %H:%i:%s') as regDtime,
+			DATE_format(modDtime, '%Y-%m-%d %H:%i:%s') as modDtime
+		FROM RssAddrMgrTbl A
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test=" rssId > 0 and rssId != null ">
+				AND rssId = #{rssId}
+			</if>
+	      	<if test=" srchCont != '' and srchCont != null ">
+		      	AND
+		      	<if test=" srchSct == 1 ">
+		      		rssSrc LIKE concat('%', #{ srchCont }, '%')
+		      	</if>
+		      	<if test=" srchSct == 2 ">
+		      		rssAddr LIKE concat('%', #{ srchCont }, '%')
+		      	</if>
+		    </if>
+		</trim>
+	</sql>
+    
+    <update id="updateRssAddr">
+        UPDATE RssAddrMgrTbl
+		<trim prefix="SET" suffixOverrides=",">
+	        <if test="rssSrc != '' and rssSrc != null">rssSrc = #{rssSrc},</if>
+	        <if test="rssAddr != '' and rssAddr != null">rssAddr = #{rssAddr},</if>
+	        <if test="guidLast != '' and guidLast != null">guidLast = #{guidLast},</if>
+	        <if test="guidParam != '' and guidParam != null">guidParam = #{guidParam, jdbcType=VARCHAR},</if>
+	        <if test="modr != '' and modr != null">modr = #{modr},</if>
+	        <if test="lastCollectDtime != '' and lastCollectDtime != null">lastCollectDtime = #{lastCollectDtime},</if>
+	        <if test="lastCollectCnt != null">lastCollectCnt = #{lastCollectCnt},</if>
+        	rssId = #{rssId}
+        </trim>
+        WHERE rssId = #{rssId}
+    </update>
+    
+    <!-- 게시판 등록 : 주간보안 동향  [T]	-->
+	<insert id="insertBbsBase">
+		INSERT INTO BbsBaseTbl ( 
+			bbsTit, bbsCont, qryCnt, bbsSct,   
+			<if test="bbsFileYn != null">bbsFileYn,</if>
+			<if test="mailSendYn != null">mailSendYn,</if>
+			<if test="procSt != null">procSt,</if>
+			<if test="notiDtime != null">notiDtime,</if>
+			regr, modr, regDtime, modDtime)
+		VALUES
+			( #{ bbsTit }, #{ bbsCont }, 0, #{ bbsSct },
+			<if test="bbsFileYn != null">#{bbsFileYn},</if>  
+			<if test="mailSendYn != null">#{mailSendYn},</if>
+			<if test="procSt != null">#{procSt},</if>
+			<if test="notiDtime != null">#{notiDtime},</if>
+			#{ regr }, #{ modr }, NOW(), NOW())
+		<selectKey keyProperty="bbsId" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID() AS bbsId
+		</selectKey>   			
+	</insert>
+    
+</mapper>

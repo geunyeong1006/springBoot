@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.5.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+group = 'com.cyberone'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    maven {
+        url "https://repo.maven.apache.org/maven2"
+    }
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+  	implementation 'javax.servlet:jstl'
+  	implementation 'mysql:mysql-connector-java'
+  	implementation 'javax.persistence:javax.persistence-api:2.2'
+	implementation 'org.mybatis:mybatis:3.5.10'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'org.apache.directory.studio:org.apache.commons.lang:2.6'
+	implementation 'org.projectlombok:lombok:1.18.20'
+	implementation 'org.mybatis:mybatis-spring:2.0.6'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

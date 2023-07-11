@@ -1,0 +1,28 @@
+package com.cyberone.demo.repository;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
+import com.cyberone.demo.model.request.rss.ReqRss;
+import com.cyberone.demo.model.request.rss.ReqRssAddr;
+import com.cyberone.demo.model.request.rss.ReqRssAddrList;
+
+@Repository
+@Mapper
+public interface RssNewsRepository {
+
+	public int insertRss(ReqRss reqRss);
+
+	public int selectRssAddrCount(ReqRssAddrList reqRssAddrList);
+
+	public List<Map<String, Object>> selectRssAddrList(ReqRssAddrList reqRssAddrList);
+	
+	public int updateRssAddr(ReqRssAddr reqRssAddr);
+	
+	public int insertBbsBase(Map<String, Object> paramMap);
+
+	
+}

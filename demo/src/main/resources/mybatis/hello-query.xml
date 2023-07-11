@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyberone.demo.repository.HelloRepository">
+	<select id="selectUsers" resultType="com.cyberone.demo.model.resposne.ResLogin">
+		SELECT  id
+			   ,pw
+			   ,email
+		FROM	users
+		WHERE	id = #{id}
+		AND		pw = #{pw}
+	</select>
+
+	<!-- <select id="selectAuditHist" resultType="com.cyberone.servicedesk.model.response.audithist.ResAuditHist">
+        <include refid="sqlAuditHist"/>
+    </select>
+	
+	<sql id="sqlAuditHist">
+        SELECT
+            auditCd
+            ,regr
+            ,(SELECT acctNm FROM AcctTbl WHERE acctId = A.regr) AS regrNm
+            ,regDtime
+            ,workMsg
+            ,workResult
+            ,workMemo
+            ,cscoCd
+            ,cscoGrpCd
+            ,(SELECT cscoNm FROM CscoTbl WHERE cscoCd = A.cscoCd) AS cscoNm
+            ,(SELECT cscoGrpNm FROM CscoGrpTbl WHERE cscoGrpCd = A.cscoGrpCd) AS cscoGrpNm
+        FROM AuditHistTbl A
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+	        <if test="cscoCd != null and cscoCd > 0">
+	            AND A.cscoCd = #{cscoCd}
+	        </if>
+	        <if test="workResult != null and workResult != ''">
+	            AND A.workResult = #{workResult}
+	        </if>
+	        <if test="workMemo != null and workMemo != ''">
+	            AND A.workMemo LIKE CONCAT('%', #{workMemo}, '%')
+	        </if>
+	        <if test="workMsg != null and workMsg != ''">
+	            AND A.workMsg LIKE CONCAT('%', #{workMsg}, '%')
+	        </if>
+	        <if test="regr != null and regr != ''">
+	            AND A.regr IN (SELECT acctId FROM AcctTbl WHERE acctNm LIKE CONCAT('%', #{regr}, '%'))
+	        </if>
+	        <if test="startDtime != null and endDtime != null and startDtime != '' and endDtime != ''">
+	            AND A.regDtime BETWEEN STR_TO_DATE(#{startDtime},'%Y-%m-%d %H:%i:%s') AND STR_TO_DATE(#{endDtime},'%Y-%m-%d %H:%i:%s') 
+	        </if>
+	        <if test="workMemo == null and workMsg == null and regr == null">
+	        	AND A.workMsg != '침해위협'
+	        </if>
+        </trim>
+    </sql> -->
+	
+</mapper>

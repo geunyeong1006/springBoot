@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="com.cyberone.demo.repository.LoginRepository">
+	<select id="selectUsers" resultType="com.cyberone.demo.model.resposne.ResLogin">
+		SELECT  id
+			   ,pw
+			   ,email
+		FROM	users
+		WHERE	id = #{id}
+		AND		pw = #{pw}
+	</select>
+</mapper>
