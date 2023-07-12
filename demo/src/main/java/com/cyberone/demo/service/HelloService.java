@@ -2,19 +2,19 @@ package com.cyberone.demo.service;
 
 import org.springframework.stereotype.Service;
 
-import com.cyberone.demo.model.request.ReqLogin;
-import com.cyberone.demo.model.response.ResLogin;
-import com.cyberone.demo.repository.HelloRepository;
+import com.cyberone.demo.dao.HelloDao;
+import com.cyberone.demo.model.request.ReqUsers;
+import com.cyberone.demo.model.response.ResUsers;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class HelloService{
+public class HelloService {
 	
-	final HelloRepository helloRepository;
+	final HelloDao helloDao;
 	
-	public ResLogin selectUsers(ReqLogin reqLogin) {
-		return helloRepository.selectUsers(reqLogin);
+	public ResUsers getUsers(ReqUsers reqLogin) {
+		return helloDao.getUsers(reqLogin);
 	}
 }

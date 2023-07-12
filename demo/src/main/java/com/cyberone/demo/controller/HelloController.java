@@ -4,26 +4,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cyberone.demo.model.request.ReqLogin;
-import com.cyberone.demo.model.response.ResLogin;
+import com.cyberone.demo.model.request.ReqUsers;
+import com.cyberone.demo.model.response.ResUsers;
 import com.cyberone.demo.service.HelloService;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping(value = "/api")
 public class HelloController {
-	private HelloService helloService;
 	
-    @PostMapping("/hello")
-    public String hello(String id, String pw) {
+	private final HelloService helloService;
+	
+    @PostMapping(value =  "/hello")
+    public ResUsers hello(String id, String pw) {
     	System.out.print("아이디 : " + id + ", 비밀번호: " + pw);
-    	ReqLogin reqLogin = new ReqLogin();
-    	ResLogin resLogin = new ResLogin();
+    	ReqUsers reqLogin = new ReqUsers();
+    	ResUsers resLogin = new ResUsers();
     	reqLogin.setId(id);
     	reqLogin.setPw(pw);
-    	resLogin = helloService.selectUsers(reqLogin);
-        return "Hello, World!";
+    	resLogin = helloService.getUsers(reqLogin);
+        return resLogin;
     }
 }

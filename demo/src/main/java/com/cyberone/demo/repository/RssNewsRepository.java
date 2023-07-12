@@ -14,12 +14,6 @@ import com.cyberone.demo.model.request.rss.ReqRssAddrList;
 @Mapper
 public interface RssNewsRepository {
 
-	public int insertRss(ReqRss reqRss);
-
-	public int selectRssAddrCount(ReqRssAddrList reqRssAddrList);
-
-	public List<Map<String, Object>> selectRssAddrList(ReqRssAddrList reqRssAddrList);
-	
 	public int updateRssAddr(ReqRssAddr reqRssAddr);
 	
 	public int insertBbsBase(Map<String, Object> paramMap);
