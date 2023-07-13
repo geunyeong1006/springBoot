@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale.Category;
 import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import com.cyberone.demo.model.request.rss.ReqRss;
 import com.cyberone.demo.model.request.rss.ReqRssAddr;
 import com.cyberone.demo.model.request.rss.ReqRssAddrList;
-import com.cyberone.demo.model.response.ResUsers;
 
 import lombok.RequiredArgsConstructor;
 
@@ -104,9 +102,6 @@ public class RssNewsDao {
 		params.add(reqRssAddr.getRssId());
 		sql += "   WHERE 	rssId = ?";
 		params.add(reqRssAddr.getRssId());
-//		Object[] params = new Object[] {reqRssAddr.getRssSrc(), reqRssAddr.getRssAddr(),
-//				reqRssAddr.getGuidLast(),reqRssAddr.getGuidParam(),reqRssAddr.getModr(),
-//				reqRssAddr.getLastCollectCnt(),reqRssAddr.getLastCollectCnt(),reqRssAddr.getRssId()};
         return jdbcTemplate.update(sql, params.toArray());
 	};
 	
@@ -131,7 +126,47 @@ public class RssNewsDao {
 		return jdbcTemplate.update(sql, params);
 	};
 	
-	public List<Map<String, Object>> selectRssList(){
+	public List<Map<String, Object>> selectRssList(String date){
+		List<Map<String, Object>> listMap = new ArrayList<>();
+		String sql = "SELECT	CONCAT(\"[\", DATE_FORMAT(regDtime, '%Y-%m-%d'),\" 보안 뉴스]\") newsTitle,\r\n"
+				+ "		DATE_FORMAT(regDtime, '%Y-%m-%d') regDday"
+				+ "		FROM BbsBase A, Rss B\r\n"
+				+ "		WHERE A.bbsId = B.bbsId\r\n";
+		
+		if(!"".equals(date)) {
+			sql += "	AND DATE_FORMAT(A.regDtime, '%Y-%m-%d') = ?\n";
+		}
+		sql += "		GROUP BY DATE_FORMAT(regDtime, '%Y-%m-%d')";
+		if(!"".equals(date)) {
+			List<Map<String, Object>> results = jdbcTemplate.query(
+					sql,
+					new RowMapper<Map<String, Object>>() {
+						public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+							Map<String, Object> map = new HashMap<>();
+							map.put("newsTitle", rs.getString("newsTitle"));
+							map.put("regDday", rs.getString("regDday"));
+							listMap.add(map);
+							return null;
+						}
+					},date);
+		}else {
+			List<Map<String, Object>> results = jdbcTemplate.query(
+					sql,
+					new RowMapper<Map<String, Object>>() {
+						public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+							Map<String, Object> map = new HashMap<>();
+							map.put("newsTitle", rs.getString("newsTitle"));
+							map.put("regDday", rs.getString("regDday"));
+							listMap.add(map);
+							return null;
+						}
+					});
+		}
+		
+		return listMap;
+	}
+	
+	public List<Map<String, Object>> selectRssDetailList(String date){
 		List<Map<String, Object>> listMap = new ArrayList<>();
 		String sql = "SELECT\r\n"
 				+ "			A.bbsId\r\n"
@@ -141,8 +176,8 @@ public class RssNewsDao {
 				+ "			, bbsSct\r\n"
 				+ "			, bbsFileYn\r\n"
 				+ "			, regr\r\n"
-				+ "			, DATE_FORMAT(regDtime, '%Y%m%d') AS regDtime\r\n"
-				+ "			, (select acctNm from users where acctId = A.modr) as modr\r\n"
+				+ "			, DATE_FORMAT(regDtime, '%Y-%m-%d %H:%i:%s') AS regDtime\r\n"
+				+ "			, (select username from users where id = A.modr) as modr\r\n"
 				+ "			, DATE_FORMAT(modDtime, '%Y-%m-%d %H:%i:%s') AS modDtime\r\n"
 				+ "			, notiDtime\r\n"
 				+ "			, mailSendYn\r\n"
@@ -152,7 +187,10 @@ public class RssNewsDao {
 				+ "			, clippingYn\r\n"
 				+ "			, rsvYn\r\n"
 				+ "			, monthYn\r\n"
-				+ "		FROM BbsBaseTbl A, RssTbl B";
+				+ "		FROM bbsbase A, rss B"
+				+ "		WHERE A.bbsId = B.bbsId";
+		sql +="		AND DATE_FORMAT(A.regDtime, '%Y-%m-%d') = ?";
+		sql +="     ORDER BY regDtime DESC";
 		
 		List<Map<String, Object>> results = jdbcTemplate.query(
 				sql,
@@ -166,9 +204,9 @@ public class RssNewsDao {
 						map.put("bbsSct", rs.getString("bbsSct"));
 						map.put("bbsFileYn", rs.getString("bbsFileYn"));
 						map.put("regr", rs.getString("regr"));
-						map.put("regDtime", rs.getDate("regDtime"));
+						map.put("regDtime", rs.getString("regDtime"));
 						map.put("modr", rs.getString("modr"));
-						map.put("modDtime", rs.getDate("modDtime"));
+						map.put("modDtime", rs.getString("modDtime"));
 						map.put("mailSendYn", rs.getString("mailSendYn"));
 						map.put("procSt", rs.getString("procSt"));
 						map.put("rssSrc", rs.getString("rssSrc"));
@@ -180,8 +218,43 @@ public class RssNewsDao {
 						return null;
 						
 					}
-				});
+				},date);
 		return listMap;
+		
+	}
+	
+	public int insertRssAlarm(String id, String alarmdate) {
+		String sql = "INSERT INTO rssalarm(id, alarmdate, alarmyn)\r\n"
+	    		+ "        VALUES (?, ?, 'n')";
+	    Object[] params = new Object[] {id, alarmdate};
+		return jdbcTemplate.update(sql, params);
+		
+	}
+	
+	public Map<String, Object> selectRssAlarm(String id){
+		String sql = "SELECT A.id AS userId,\r\n"
+				+ "DATE_FORMAT(A.modDtime, '%Y-%m-%d') lastLoginDay, \r\n"
+				+ "B.id AS alarmId, \r\n"
+				+ "B.alarmdate\r\n"
+				+ "FROM users A\r\n"
+				+ "LEFT JOIN rssalarm B ON A.id = B.id\r\n"
+				+ "WHERE A.id = ?";
+		List<Map<String, Object>> results = jdbcTemplate.query(
+			    sql,
+			    new RowMapper<Map<String, Object>>() {
+			        public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+			            Map<String, Object> resultMap = new HashMap<>();
+			            resultMap.put("id", rs.getString("userId"));
+			            resultMap.put("lastLoginDay", rs.getString("lastLoginDay"));
+			            resultMap.put("alarmId", rs.getString("alarmId"));
+			            resultMap.put("alarmdate", rs.getString("alarmdate"));
+			            // 필요한 다른 필드들도 마찬가지로 설정해줍니다.
+			            return resultMap;
+			        }
+			    },
+			    id
+			);
+			return results.isEmpty() ? null : results.get(0);
 		
 	}
 

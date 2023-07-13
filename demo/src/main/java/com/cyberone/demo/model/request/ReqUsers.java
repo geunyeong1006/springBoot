@@ -12,4 +12,8 @@ public class ReqUsers {
     private String pw;
     
 	private String email;
+	
+	private String regr;
+	
+	private String modr;
 }

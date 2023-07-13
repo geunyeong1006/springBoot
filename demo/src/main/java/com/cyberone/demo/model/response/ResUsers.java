@@ -20,4 +20,6 @@ public class ResUsers {
     private int userTp;
     
     private int userSt; 
+    
+    private String salt;
 }
