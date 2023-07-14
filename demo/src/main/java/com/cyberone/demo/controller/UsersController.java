@@ -14,38 +14,32 @@ import com.cyberone.demo.service.UsersService;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 사용자 컨트롤러 클래스입니다.
+ * 사용자 관련 기능을 제공합니다.
+ */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping("/api")
 public class UsersController {
+	/**
+	 * 사용자 Service 객체입니다.
+	 */
 	private final UsersService usersService;
 	
-	@PostMapping(value="/verifyAccoount")
-	public String VerifyAccoount(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-		
-		
-		return "/";
-		
-	}
-	
-	@PostMapping(value="/login")
-	public Map<String, Object> Login(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+	@PostMapping("/login")
+	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, Model model){
+		//로그인
 		
 		return usersService.login(request, response);
 	}
 	
-	@PostMapping(value = "/signup")
+	@PostMapping("/signup")
 	public Map<String, Object> signup(HttpServletRequest request, HttpServletResponse response, Model model) {
+		//회원가입
 		
 		return usersService.signup(request, response);
 		
 	}
 	
-	@PostMapping(value="/verifySignup")
-	public String VerifySignup(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-		
-		
-		return "/";
-		
-	}
 }

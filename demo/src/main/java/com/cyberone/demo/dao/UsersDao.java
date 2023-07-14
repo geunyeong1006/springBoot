@@ -16,26 +16,42 @@ import com.cyberone.demo.model.response.ResUsers;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 사용자 Dao 클래스입니다.
+ * 사용자 관련 기능을 제공합니다.
+ */
 @Repository
 @RequiredArgsConstructor
 public class UsersDao {
 	
+	/**
+	 * JdbcTemplate 객체입니다.
+	 */
 	private final JdbcTemplate jdbcTemplate;
 	
+	/**
+	 * 로그인 메서드입니다.
+	 * @return 유저 정보
+	 */
 	public ResUsers login(ReqUsers reqUser) {
 		List<ResUsers> results = jdbcTemplate.query(
 				"SELECT * FROM users WHERE id = ? AND pw = ?",
-				new RowMapper<ResUsers>() {
-					public ResUsers mapRow(ResultSet rs, int rowNum) throws SQLException {
-						ResUsers resLogin = new ResUsers();
-						resLogin.setId(rs.getString("id"));
-						resLogin.setPw(rs.getString("pw"));
-						return resLogin;
+				new RowMapper<>() {
+					@Override
+					public ResUsers mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+						ResUsers resUser = new ResUsers();
+						resUser.setId(resultSet.getString("id"));
+						resUser.setPw(resultSet.getString("pw"));
+						return resUser;
 					}
 				},reqUser.getId(),reqUser.getPw());
 		return results.isEmpty() ? null : results.get(0);
 	}
 	
+	/**
+	 * 유저 수정 메서드입니다.
+	 * @return 수정 성공 여부
+	 */
 	public int updateUser(ReqUsers reqUsers) {
 		List<Object> params = new ArrayList<>();
 		
@@ -61,6 +77,10 @@ public class UsersDao {
         return jdbcTemplate.update(sql, params.toArray());
 	}
 	
+	/**
+	 * 회원가입 메서드입니다.
+	 * @return 회원가입 성공 여부
+	 */
 	public int signup(ReqUsers reqUser) {
 		List<Object> params = new ArrayList<>();
 		params.add(reqUser.getId());
@@ -73,48 +93,56 @@ public class UsersDao {
 		return jdbcTemplate.update(sql, params.toArray());
 	}
 	
-	public ResUsers confirmUser(String id) {
+	/**
+	 * 유저 정보 조회 메서드입니다.
+	 * @return 유저정보
+	 */
+	public ResUsers selectUser(String id) {
 		List<ResUsers> results = jdbcTemplate.query(
 				"SELECT * FROM users WHERE id = ?",
-				new RowMapper<ResUsers>() {
-					public ResUsers mapRow(ResultSet rs, int rowNum) throws SQLException {
+				new RowMapper<>() {
+					@Override
+					public ResUsers mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 						ResUsers resUser = new ResUsers();
-						resUser.setId(rs.getString("id"));
+						resUser.setId(resultSet.getString("id"));
 						resUser.setUserName("username");
-						resUser.setPw(rs.getString("pw"));
-						resUser.setEmail(rs.getString("email"));
-						resUser.setUserTp(rs.getInt("userTp"));;
-						resUser.setUserSt(rs.getInt("userSt"));
+						resUser.setPw(resultSet.getString("pw"));
+						resUser.setEmail(resultSet.getString("email"));
+						resUser.setUserTp(resultSet.getInt("userTp"));
+						resUser.setUserSt(resultSet.getInt("userSt"));
 						return resUser;
 					}
 				},id);
 		return results.isEmpty() ? null : results.get(0);
 	}
 	
+	/**
+	 * 모든 유저 정보 조회 메서드입니다.
+	 * @return 모든 유저정보
+	 */
 	public List<Map<String, Object>> selectAllUser() {
-		List<Map<String, Object>> listMap = new ArrayList<>();
 		
 		List<Map<String, Object>> results = jdbcTemplate.query(
 				"SELECT * FROM users",
-				new RowMapper<Map<String, Object>>() {
-					public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+				new RowMapper<>() {
+					@Override
+					public Map<String, Object> mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 						Map<String, Object> map = new HashMap<>();
-						map.put("id", rs.getString("id"));
-						map.put("username", rs.getString("username"));
-						map.put("pw", rs.getString("pw"));
-						map.put("email", rs.getString("email"));
-						map.put("userTp", rs.getInt("userTp"));
-						map.put("userSt", rs.getInt("userSt"));
-						map.put("regr", rs.getString("regr"));
-						map.put("modr", rs.getString("modr"));
-						map.put("regDtime", rs.getTimestamp("regDtime").toLocalDateTime());
-						map.put("modDtime", rs.getTimestamp("modDtime").toLocalDateTime());
-						listMap.add(map);
-						return null;
+						map.put("id", resultSet.getString("id"));
+						map.put("username", resultSet.getString("username"));
+						map.put("pw", resultSet.getString("pw"));
+						map.put("email", resultSet.getString("email"));
+						map.put("userTp", resultSet.getInt("userTp"));
+						map.put("userSt", resultSet.getInt("userSt"));
+						map.put("regr", resultSet.getString("regr"));
+						map.put("modr", resultSet.getString("modr"));
+						map.put("regDtime", resultSet.getTimestamp("regDtime").toLocalDateTime());
+						map.put("modDtime", resultSet.getTimestamp("modDtime").toLocalDateTime());
+						return map;
 						
 					}
 				});
-		return listMap;
+		return results;
 	}
 	
 

@@ -11,7 +11,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.CharacterData;
@@ -49,8 +48,7 @@ public class RSSWriterBatchJob {
 	 * Link:  http://www.ahnlab.com/kr/site/securityinfo/secunews/secuNewsView.do?curPage=1&menu_dist=2&seq=23239 
 	 * description: 자신의 컴퓨터 하드웨어 틈새나 구멍 속에 붙어있는 지저분한 먼지나 찌거기들이 보이는가? PC 내부와 주변 장치에는 머리카락, 먼지, 담배 연기,
 	 */
-	@Scheduled(cron = "0 0 0/3 * * ?")
-//	@Autowired
+	@Scheduled(cron = "0 0/1 * * * ?")
 	public void run() {
 		
 		long lLastTime;

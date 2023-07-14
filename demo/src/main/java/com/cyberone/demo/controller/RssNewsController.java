@@ -15,23 +15,44 @@ import com.cyberone.demo.service.RssNewsService;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Rss 컨트롤러 클래스입니다.
+ * Rss 관련 기능을 제공합니다.
+ */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping("/api")
 public class RssNewsController {
-	
+	/**
+	 * Rss Service 객체입니다.
+	 */
 	private final RssNewsService rssNewsService;
 	
-	@GetMapping(value = "/newsClipping")
-	public List<Map<String, Object>> newsClippingList(HttpServletRequest request, HttpServletResponse response, Model model) {
-		String date = request.getParameter("regDdate");
-		return rssNewsService.selectRssList(date);
+	@GetMapping("/selectNewsList")
+	public List<Map<String, Object>> selectNewsList(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String date = request.getParameter("regDday");
+		return rssNewsService.selectNewsList(date);
 	}
 	
-	@GetMapping(value = "/newsClippingDetail")
-	public List<Map<String, Object>> newsClippingDetailList(HttpServletRequest request, HttpServletResponse response, Model model) {
-		String date = request.getParameter("regDdate");
-		return rssNewsService.selectRssDetailList(date);
+	@GetMapping("/selectNewsDetailList")
+	public List<Map<String, Object>> selectNewsDetailList(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String date = request.getParameter("regDday");
+		return rssNewsService.selectNewsDetailList(date);
+	}
+	
+	@GetMapping("/selectNewsAlarmList")
+	public List<Map<String, Object>> newsAlarmList(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String id = request.getParameter("id");
+		return rssNewsService.selectNewsAlarmList(id);
+	}
+	
+	@GetMapping("/updatenewsAlarm")
+	public List<Map<String, Object>> updatenewsAlarmList(HttpServletRequest request, HttpServletResponse response, Model model) {
+		String id = request.getParameter("id");
+		String alarmdate = request.getParameter("alarmdate");
+		rssNewsService.updateNewsAlarm(id, alarmdate);
+			
+		return rssNewsService.selectNewsAlarmList(id);
 	}
 
 }

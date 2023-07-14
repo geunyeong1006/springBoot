@@ -20,16 +20,31 @@ import com.cyberone.demo.model.request.rss.ReqRssAddrList;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Rss 서비스 클래스입니다.
+ * Rss 관련 기능을 제공합니다.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class RssNewsService {
+	/**
+	 * Rss DAO 객체입니다.
+	 */
+	private final RssNewsDao rssNewsDao;
 	
-	final RssNewsDao rssNewsDao;
+	/**
+	 * 사용자 서비스 객체입니다.
+	 */
 	private final UsersService usersService;
-
+	
+	/**
+	 * Rss추가 및 알람등록 메서드입니다.
+	 * @return Rss추가 성공여부
+	 */
 	public int addRss(ReqRss reqRss) {
-		if ( !String.valueOf(reqRss.getRegr()).equals("system") ) {
+		if (!"system".equals(String.valueOf(reqRss.getRegr()))) {
+		    // reqRss.getRegr()이 "system"이 아닌 경우의 로직 처리
 //			User user = ServletUtil.getSessionUser();
 //			reqRss.setRegr(user.getAcct().getAcctId());
 		}
@@ -56,39 +71,45 @@ public class RssNewsService {
 		
 		List<Map<String, Object>> allUserList = usersService.selectAllUser();
 		for (Map<String, Object> userResult : allUserList) {
-			 Map<String, Object> rssAlarm = selectRssAlarm(userResult.get("id").toString());
 			 String loginDate = userResult.get("modDtime").toString();
-			 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 			 DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			 
 
 			 LocalDateTime localDateTime = LocalDateTime.parse(loginDate, inputFormatter);
 			 String loginDay = localDateTime.format(outputFormatter);
 			 
 			 LocalDate loginLocalDate = LocalDate.parse(loginDay);
 		     LocalDate todayLocalDate = LocalDate.parse(today);
-
-		     if (loginLocalDate.isBefore(todayLocalDate)) {
-		    	 if(rssAlarm != null && rssAlarm.get("alarmdate") == null) {
-		    		 rssNewsDao.insertRssAlarm(userResult.get("id").toString(), today);
-		    	 }
+		     
+		     Map<String, Object> rssAlarm = rssNewsDao.selectNewsAlarm(userResult.get("id").toString(), today);
+		     
+		     if(rssAlarm == null && loginLocalDate.isBefore(todayLocalDate)) {
+		    	 rssNewsDao.insertRssAlarm(userResult.get("id").toString(), today);
 		     }
 		}
 		rssNewsDao.insertBbsBase(paramMap);
 		
 		
 		reqRss.setClippingYn("n");
-		int result = rssNewsDao.insertRss(reqRss);
-		return result;
+		return rssNewsDao.insertRss(reqRss);
 	}
 
-
+	
+	/**
+	 * Rss주소 조회 메서드입니다.
+	 * @return Rss주소 리스트
+	 */
 	public List<Map<String, Object>> selectRssAddrList(ReqRssAddrList reqRssAddrList) {
 		return rssNewsDao.selectRssAddrList(reqRssAddrList);
 	}
 	
-
+	/**
+	 * Rss주소 수정 메서드입니다.
+	 * @return Rss수정 성공여주
+	 */
 	public int editRssAddr(ReqRssAddr reqRssAddr) {
-		if ( String.valueOf(reqRssAddr.getModr()).equals("system") ) {
+		if (!"system".equals(String.valueOf(reqRssAddr.getRegr()))) {
 			reqRssAddr.setModr(null);
 		} else {
 //			User user = ServletUtil.getSessionUser();
@@ -98,7 +119,10 @@ public class RssNewsService {
 		return result;
 	}
 
-
+	/**
+	 * Rss주소 수정 메서드입니다.
+	 * @return Rss수정 성공여주
+	 */
 	public int editRssAddrCollect(String rssId, int collectCnt) {
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -111,24 +135,41 @@ public class RssNewsService {
 		return rssNewsDao.updateRssAddr(reqRssAddr);
 	}	
 	
-	public List<Map<String, Object>> selectRssList(String date){
+	/**
+	 * Rss리스트 조회 메서드입니다.
+	 * @return Rss리스트
+	 */
+	public List<Map<String, Object>> selectNewsList(String date){
 		
-		return rssNewsDao.selectRssList(date);
+		return rssNewsDao.selectNewsList(date);
 		
 	}
 	
+	/**
+	 * Rss알람 등록 메서드입니다.
+	 * @return Rss알람 성공여부
+	 */
 	public int insertRssAlarm(String id, String alarmdate) {
 		return rssNewsDao.insertRssAlarm(id, alarmdate);
 	}
 	
-	public Map<String, Object> selectRssAlarm(String id){
-		return rssNewsDao.selectRssAlarm(id);
+	/**
+	 * Rss알람 조회 메서드입니다.
+	 * @return Rss알람 성공여부
+	 */
+	public List<Map<String, Object>> selectNewsAlarmList(String id){
+		return rssNewsDao.selectNewsAlarmList(id);
 	}
 	
-	public List<Map<String, Object>> selectRssDetailList(String date){
+	public List<Map<String, Object>> selectNewsDetailList(String date){
 		
-		return rssNewsDao.selectRssDetailList(date);
+		return rssNewsDao.selectNewsDetailList(date);
 		
+	}
+	
+	public int updateNewsAlarm(String id, String alarmdate) {
+		
+		return rssNewsDao.updateNewsAlarm(id, alarmdate);
 	}
 	
 }

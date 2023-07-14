@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.cyberone.demo.model.request.rss.ReqRss;
 import com.cyberone.demo.model.request.rss.ReqRssAddr;
 import com.cyberone.demo.model.request.rss.ReqRssAddrList;
+import com.cyberone.demo.model.response.ResUsers;
 
 import lombok.RequiredArgsConstructor;
 
@@ -65,7 +66,6 @@ public class RssNewsDao {
 	
 	public int updateRssAddr(ReqRssAddr reqRssAddr) {
 		List<Object> params = new ArrayList<>();
-		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 		String sql = "UPDATE	rssaddrmgr\r\n";
 		sql += "	  SET		           \r\n";
 		if(reqRssAddr.getRssSrc() != null) {
@@ -126,48 +126,45 @@ public class RssNewsDao {
 		return jdbcTemplate.update(sql, params);
 	};
 	
-	public List<Map<String, Object>> selectRssList(String date){
-		List<Map<String, Object>> listMap = new ArrayList<>();
+	public List<Map<String, Object>> selectNewsList(String date){
+		List<Map<String, Object>> results = new ArrayList<>();
 		String sql = "SELECT	CONCAT(\"[\", DATE_FORMAT(regDtime, '%Y-%m-%d'),\" 보안 뉴스]\") newsTitle,\r\n"
 				+ "		DATE_FORMAT(regDtime, '%Y-%m-%d') regDday"
 				+ "		FROM BbsBase A, Rss B\r\n"
 				+ "		WHERE A.bbsId = B.bbsId\r\n";
 		
-		if(!"".equals(date)) {
+		if(!"".equals(date) && date != null) {
 			sql += "	AND DATE_FORMAT(A.regDtime, '%Y-%m-%d') = ?\n";
 		}
 		sql += "		GROUP BY DATE_FORMAT(regDtime, '%Y-%m-%d')";
-		if(!"".equals(date)) {
-			List<Map<String, Object>> results = jdbcTemplate.query(
+		if(!"".equals(date) && date != null) {
+			results = jdbcTemplate.query(
 					sql,
 					new RowMapper<Map<String, Object>>() {
 						public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 							Map<String, Object> map = new HashMap<>();
 							map.put("newsTitle", rs.getString("newsTitle"));
 							map.put("regDday", rs.getString("regDday"));
-							listMap.add(map);
-							return null;
+							return map;
 						}
 					},date);
 		}else {
-			List<Map<String, Object>> results = jdbcTemplate.query(
+			results = jdbcTemplate.query(
 					sql,
 					new RowMapper<Map<String, Object>>() {
 						public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 							Map<String, Object> map = new HashMap<>();
 							map.put("newsTitle", rs.getString("newsTitle"));
 							map.put("regDday", rs.getString("regDday"));
-							listMap.add(map);
-							return null;
+							return map;
 						}
 					});
 		}
 		
-		return listMap;
+		return results;
 	}
 	
-	public List<Map<String, Object>> selectRssDetailList(String date){
-		List<Map<String, Object>> listMap = new ArrayList<>();
+	public List<Map<String, Object>> selectNewsDetailList(String date){
 		String sql = "SELECT\r\n"
 				+ "			A.bbsId\r\n"
 				+ "			, bbsTit\r\n"
@@ -214,12 +211,11 @@ public class RssNewsDao {
 						map.put("clippingYn", rs.getString("clippingYn"));
 						map.put("rsvYn", rs.getString("rsvYn"));
 						map.put("monthYn", rs.getString("monthYn"));
-						listMap.add(map);
-						return null;
+						return map;
 						
 					}
 				},date);
-		return listMap;
+		return results;
 		
 	}
 	
@@ -231,14 +227,14 @@ public class RssNewsDao {
 		
 	}
 	
-	public Map<String, Object> selectRssAlarm(String id){
-		String sql = "SELECT A.id AS userId,\r\n"
-				+ "DATE_FORMAT(A.modDtime, '%Y-%m-%d') lastLoginDay, \r\n"
-				+ "B.id AS alarmId, \r\n"
-				+ "B.alarmdate\r\n"
-				+ "FROM users A\r\n"
+	public List<Map<String, Object>> selectNewsAlarmList(String id){
+		String sql = "SELECT	A.id AS userId,\r\n"
+				+ "		DATE_FORMAT(A.modDtime, '%Y-%m-%d') lastLoginDay, \r\n"
+				+ "		B.id AS alarmId, \r\n"
+				+ "		B.alarmdate\r\n"
+				+ "FROM		users A\r\n"
 				+ "LEFT JOIN rssalarm B ON A.id = B.id\r\n"
-				+ "WHERE A.id = ?";
+				+ "WHERE		A.id = ?";	
 		List<Map<String, Object>> results = jdbcTemplate.query(
 			    sql,
 			    new RowMapper<Map<String, Object>>() {
@@ -254,8 +250,44 @@ public class RssNewsDao {
 			    },
 			    id
 			);
-			return results.isEmpty() ? null : results.get(0);
+		return results;
 		
+	}
+	
+	/**
+	 * 유저 알람 정보 조회 메서드입니다.
+	 * @return 유저정보
+	 */
+	public Map<String, Object> selectNewsAlarm(String id, String alarmdate) {
+		String sql = "SELECT	*\r\n"
+				+ "FROM		rssalarm\r\n"
+				+ "WHERE		id = ?\r\n"
+				+ "AND  		alarmdate =DATE_format(?, '%Y-%m-%d')\r\n";
+		List<Map<String, Object>> results = jdbcTemplate.query(
+				sql,
+				new RowMapper<>() {
+					@Override
+					public Map<String, Object> mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+						Map<String, Object> map = new HashMap<>();
+						map.put("id", resultSet.getString("id"));
+						map.put(alarmdate, resultSet.getString("alarmdate"));
+						return map;
+					}
+				},id,alarmdate);
+		return results.isEmpty() ? null : results.get(0);
+	}
+	
+	public int updateNewsAlarm(String id, String alarmdate) {
+		List<Object> params = new ArrayList<>();
+		String sql = "UPDATE	rssalarm\r\n"
+				+ "SET\r\n"
+				+ "			alarmyn = 'y'\r\n"
+				+ "WHERE		\r\n"
+				+ "			id = ?\r\n"
+				+ "AND		alarmdate = ?";
+		params.add(id);
+		params.add(alarmdate);
+		return jdbcTemplate.update(sql, params.toArray());
 	}
 
 }

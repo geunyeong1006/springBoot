@@ -3,9 +3,6 @@ package com.cyberone.demo.model.request.rss;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.reflect.Method;
 
 import org.apache.commons.lang.StringEscapeUtils;
