@@ -43,11 +43,11 @@ public class ReqRss extends ReqBbsBase {
 		}
 
 		if (bbsTit.isEmpty()) {
-			throw new Exception("제목을 입력하세요.");
+			throw new IllegalArgumentException("제목을 입력하세요.");
 		}
 
 		if (bbsCont.isEmpty()) {
-			throw new Exception("본문을 입력하세요.");
+			throw new IllegalArgumentException("본문을 입력하세요.");
 		}
 
 		bbsTit = HtmlUtils.htmlUnescape(StringEscapeUtils.unescapeHtml(bbsTit));

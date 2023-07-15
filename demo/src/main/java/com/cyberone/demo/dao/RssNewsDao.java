@@ -137,6 +137,7 @@ public class RssNewsDao {
 			sql += "	AND DATE_FORMAT(A.regDtime, '%Y-%m-%d') = ?\n";
 		}
 		sql += "		GROUP BY DATE_FORMAT(regDtime, '%Y-%m-%d')";
+		sql += "		ORDER BY regDday DESC";
 		if(!"".equals(date) && date != null) {
 			results = jdbcTemplate.query(
 					sql,
@@ -231,7 +232,8 @@ public class RssNewsDao {
 		String sql = "SELECT	A.id AS userId,\r\n"
 				+ "		DATE_FORMAT(A.modDtime, '%Y-%m-%d') lastLoginDay, \r\n"
 				+ "		B.id AS alarmId, \r\n"
-				+ "		B.alarmdate\r\n"
+				+ "		B.alarmdate, \r\n"
+				+ " 	B.alarmyn \r\n"	
 				+ "FROM		users A\r\n"
 				+ "LEFT JOIN rssalarm B ON A.id = B.id\r\n"
 				+ "WHERE		A.id = ?";	
@@ -244,6 +246,7 @@ public class RssNewsDao {
 			            resultMap.put("lastLoginDay", rs.getString("lastLoginDay"));
 			            resultMap.put("alarmId", rs.getString("alarmId"));
 			            resultMap.put("alarmdate", rs.getString("alarmdate"));
+			            resultMap.put("alarmyn", rs.getString("alarmyn"));
 			            // 필요한 다른 필드들도 마찬가지로 설정해줍니다.
 			            return resultMap;
 			        }

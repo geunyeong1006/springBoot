@@ -28,31 +28,42 @@ public class RssNewsController {
 	 */
 	private final RssNewsService rssNewsService;
 	
+	/**
+	 * 일자별 뉴스를 확인하는 서비스입니다.
+	 */
 	@GetMapping("/selectNewsList")
 	public List<Map<String, Object>> selectNewsList(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String date = request.getParameter("regDday");
 		return rssNewsService.selectNewsList(date);
 	}
 	
+	/**
+	 * 헤딩일자의 뉴스를 확인하는 서비스입니다.
+	 */
 	@GetMapping("/selectNewsDetailList")
 	public List<Map<String, Object>> selectNewsDetailList(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String date = request.getParameter("regDday");
 		return rssNewsService.selectNewsDetailList(date);
 	}
 	
+	/**
+	 * 계정의 알람리스트를 확인하는 서비스입니다.
+	 */
 	@GetMapping("/selectNewsAlarmList")
 	public List<Map<String, Object>> newsAlarmList(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String id = request.getParameter("id");
 		return rssNewsService.selectNewsAlarmList(id);
 	}
 	
-	@GetMapping("/updatenewsAlarm")
-	public List<Map<String, Object>> updatenewsAlarmList(HttpServletRequest request, HttpServletResponse response, Model model) {
+	/**
+	 * 계정의 알람을 수정하는 서비스입니다.
+	 */
+	@GetMapping("/updateNewsAlarm")
+	public int updatenewsAlarmList(HttpServletRequest request, HttpServletResponse response, Model model) {
 		String id = request.getParameter("id");
 		String alarmdate = request.getParameter("alarmdate");
-		rssNewsService.updateNewsAlarm(id, alarmdate);
+		return rssNewsService.updateNewsAlarm(id, alarmdate);
 			
-		return rssNewsService.selectNewsAlarmList(id);
 	}
 
 }
