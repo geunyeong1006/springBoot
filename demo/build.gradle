@@ -37,6 +37,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.mybatis:mybatis:3.5.7'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	// JavaMail API
+    implementation 'javax.mail:javax.mail-api:1.6.2'
+    
+    // Spring Mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {

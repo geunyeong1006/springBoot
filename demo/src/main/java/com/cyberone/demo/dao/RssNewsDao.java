@@ -2,7 +2,6 @@ package com.cyberone.demo.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import com.cyberone.demo.model.request.rss.ReqRss;
 import com.cyberone.demo.model.request.rss.ReqRssAddr;
 import com.cyberone.demo.model.request.rss.ReqRssAddrList;
-import com.cyberone.demo.model.response.ResUsers;
 
 import lombok.RequiredArgsConstructor;
 

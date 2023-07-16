@@ -43,12 +43,8 @@ public class RSSWriterBatchJob {
 	 * 2. RSS 파싱
 	 * 3. RSS 주소 DB 등록
 	 * 4. RSS 주소 DB guidLast 업데이트 등록
-	 * PK : Link
-	 * Title: [IT&LIFE] 깔끔하게 한해를 시작하는 PC 청소 방법 
-	 * Link:  http://www.ahnlab.com/kr/site/securityinfo/secunews/secuNewsView.do?curPage=1&menu_dist=2&seq=23239 
-	 * description: 자신의 컴퓨터 하드웨어 틈새나 구멍 속에 붙어있는 지저분한 먼지나 찌거기들이 보이는가? PC 내부와 주변 장치에는 머리카락, 먼지, 담배 연기,
 	 */
-	@Scheduled(cron = "0 0/1 * * * ?")
+	@Scheduled(cron = "0 0/30 * * * ?")
 	public void run() {
 		
 		long lLastTime;

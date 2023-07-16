@@ -39,7 +39,6 @@ public class UsersService {
 	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("success", "");
-		String message = "";
 		String androidID = request.getParameter("id");
 		String androidPW = request.getParameter("pw");
 		ReqUsers reqUser = new ReqUsers();

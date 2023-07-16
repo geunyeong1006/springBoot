@@ -71,7 +71,7 @@ public class RssNewsService {
 		
 		List<Map<String, Object>> allUserList = usersService.selectAllUser();
 		for (Map<String, Object> userResult : allUserList) {
-			 String loginDate = userResult.get("modDtime").toString();
+			 String loginDate = String.valueOf(userResult.get("modDtime"));
 			 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 			 DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			 
@@ -82,10 +82,10 @@ public class RssNewsService {
 			 LocalDate loginLocalDate = LocalDate.parse(loginDay);
 		     LocalDate todayLocalDate = LocalDate.parse(today);
 		     
-		     Map<String, Object> rssAlarm = rssNewsDao.selectNewsAlarm(userResult.get("id").toString(), today);
+		     Map<String, Object> rssAlarm = rssNewsDao.selectNewsAlarm(String.valueOf(userResult.get("id")), today);
 		     
 		     if(rssAlarm == null && loginLocalDate.isBefore(todayLocalDate)) {
-		    	 rssNewsDao.insertRssAlarm(userResult.get("id").toString(), today);
+		    	 rssNewsDao.insertRssAlarm(String.valueOf(userResult.get("id")), today);
 		     }
 		}
 		rssNewsDao.insertBbsBase(paramMap);
