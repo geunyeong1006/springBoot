@@ -38,7 +38,7 @@ public class NewsEmailSendBatchJob {
 			List<Map<String, Object>> todayNews =  rssNewsService.selectNewsList(today);
 			for (Map<String, Object> user : allUserList) {
 				String email = String.valueOf(user.get("email"));
-				if(email != null  && !"".equals(email) & todayNews.size() > 0) {
+				if(email != null  && !"".equals(email) && !todayNews.isEmpty()) {
 					emailService.sendEmail(email, "[" + today + "] 보안 뉴스가 있습니다.", "보안뉴스 내용");
 				}
 			}

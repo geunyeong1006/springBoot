@@ -41,7 +41,7 @@ public class RssNewsController {
 	 * 헤딩일자의 뉴스를 확인하는 서비스입니다.
 	 */
 	@GetMapping("/selectNewsDetailList")
-	public List<Map<String, Object>> selectNewsDetailList(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public List<Map<String, Object>> selectNewsDetailList(HttpServletRequest request, HttpServletResponse response) {
 		String date = request.getParameter("regDday");
 		return rssNewsService.selectNewsDetailList(date);
 	}
@@ -50,7 +50,7 @@ public class RssNewsController {
 	 * 계정의 알람리스트를 확인하는 서비스입니다.
 	 */
 	@GetMapping("/selectNewsAlarmList")
-	public List<Map<String, Object>> newsAlarmList(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public List<Map<String, Object>> selectNewsAlarmList(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
 		return rssNewsService.selectNewsAlarmList(id);
 	}
@@ -59,7 +59,7 @@ public class RssNewsController {
 	 * 계정의 알람을 수정하는 서비스입니다.
 	 */
 	@GetMapping("/updateNewsAlarm")
-	public int updatenewsAlarmList(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public int updatenewsAlarmList(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
 		String alarmdate = request.getParameter("alarmdate");
 		return rssNewsService.updateNewsAlarm(id, alarmdate);

@@ -30,8 +30,6 @@ public class UsersService {
 	 */
 	private final UsersDao usersDao;
 
-	
-	
 	/**
 	 * 로그인 메서드입니다.
 	 * @return 로그인 성공여부
@@ -54,7 +52,6 @@ public class UsersService {
 			map.put("fail", "아이디 또는 비밀번호를 잘못 입력했습니다.\r\n"
 					+ "입력하신 내용을 다시 확인해주세요.");
 		}
-    	
     	
 		return map;
 	}

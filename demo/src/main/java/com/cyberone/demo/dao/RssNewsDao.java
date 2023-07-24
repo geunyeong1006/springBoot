@@ -28,8 +28,7 @@ public class RssNewsDao {
 	    		+ "        VALUES (?, ?, ?)";
 	    Object[] params = new Object[] {reqRss.getRssSrc(), reqRss.getRssLink(),reqRss.getClippingYn()};
 		return jdbcTemplate.update(sql, params);
-		
-	};
+	}
 
 
 	public List<Map<String, Object>> selectRssAddrList(ReqRssAddrList reqRssAddrList){
@@ -44,7 +43,8 @@ public class RssNewsDao {
 				;
 		List<Map<String, Object>> results = jdbcTemplate.query(
 				sql,
-				new RowMapper<Map<String, Object>>() {
+				new RowMapper<>() {
+					@Override
 					public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Map<String, Object> map = new HashMap<>();
 						map.put("rssId", rs.getString("rssId"));
@@ -60,7 +60,7 @@ public class RssNewsDao {
 					}
 				},reqRssAddrList.getLimit(),reqRssAddrList.getRows());
 		return results.isEmpty() ? null : results;
-	};
+	}
 	
 	public int updateRssAddr(ReqRssAddr reqRssAddr) {
 		List<Object> params = new ArrayList<>();
@@ -101,7 +101,7 @@ public class RssNewsDao {
 		sql += "   WHERE 	rssId = ?";
 		params.add(reqRssAddr.getRssId());
         return jdbcTemplate.update(sql, params.toArray());
-	};
+	}
 	
 	public int insertBbsBase(Map<String, Object> paramMap) {
 		String sql = "		INSERT INTO bbsbase ( \r\n"
@@ -139,7 +139,8 @@ public class RssNewsDao {
 		if(!"".equals(date) && date != null) {
 			results = jdbcTemplate.query(
 					sql,
-					new RowMapper<Map<String, Object>>() {
+					new RowMapper<>() {
+						@Override
 						public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 							Map<String, Object> map = new HashMap<>();
 							map.put("newsTitle", rs.getString("newsTitle"));
@@ -150,7 +151,8 @@ public class RssNewsDao {
 		}else {
 			results = jdbcTemplate.query(
 					sql,
-					new RowMapper<Map<String, Object>>() {
+					new RowMapper<>() {
+						@Override
 						public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 							Map<String, Object> map = new HashMap<>();
 							map.put("newsTitle", rs.getString("newsTitle"));
@@ -190,7 +192,8 @@ public class RssNewsDao {
 		
 		List<Map<String, Object>> results = jdbcTemplate.query(
 				sql,
-				new RowMapper<Map<String, Object>>() {
+				new RowMapper<>() {
+					@Override
 					public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Map<String, Object> map = new HashMap<>();
 						map.put("bbsId", rs.getInt("bbsId"));
@@ -237,7 +240,8 @@ public class RssNewsDao {
 				+ "WHERE		A.id = ?";	
 		List<Map<String, Object>> results = jdbcTemplate.query(
 			    sql,
-			    new RowMapper<Map<String, Object>>() {
+			    new RowMapper<>() {
+			    	@Override
 			        public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
 			            Map<String, Object> resultMap = new HashMap<>();
 			            resultMap.put("id", rs.getString("userId"));

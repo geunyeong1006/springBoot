@@ -27,15 +27,23 @@ public class UsersController {
 	 */
 	private final UsersService usersService;
 	
+	/**
+	 * 로그인 메서드입니다.
+	 * @return 로그인 성공여부
+	 */
 	@PostMapping("/login")
-	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, Model model){
+	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response){
 		//로그인
 		
 		return usersService.login(request, response);
 	}
 	
+	/**
+	 * 회원가입 메서드입니다.
+	 * @return 회원가입 성공여부
+	 */
 	@PostMapping("/signup")
-	public Map<String, Object> signup(HttpServletRequest request, HttpServletResponse response, Model model) {
+	public Map<String, Object> signup(HttpServletRequest request, HttpServletResponse response) {
 		//회원가입
 		
 		return usersService.signup(request, response);
